@@ -2,12 +2,12 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-class UserController {
+class UserController {  
 
   // 🔐 Register user (admin or student)
   static async register(req, res) {
     try {
-      const { name, email, password, role } = req.body;
+      const { name, email, password } = req.body;
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -20,7 +20,7 @@ class UserController {
         name,
         email,
         password: hashedPassword,
-        role // optional: "admin" or "student"
+       
       });
 
       await newUser.save();

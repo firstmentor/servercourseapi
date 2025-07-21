@@ -1,10 +1,10 @@
 const express = require("express");
 const ProductController = require("../controllers/ProductController");
 const CourseController = require("../controllers/courseController");
-const BookingController = require("../controllers/bookingController");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
 const { isAuthenticated } = require("../middlewares/authMiddleware");
+const bookingController = require("../controllers/bookingController");
 
 
 
@@ -24,11 +24,13 @@ router.get('/courseView/:id', CourseController.getCourseById);
 router.put('/courseupdate/:id', CourseController.updateCourse);
 router.delete('/coursedelete/:id', CourseController.deleteCourse);
 
-
+    
 
 //bookign
-router.post('/addBooking', BookingController.createBooking);
-router.get('/booking', BookingController.getBookings);
+router.post('/book-course/:id', isAuthenticated, bookingController.bookCourse);
+router.get('/my-bookings', isAuthenticated, bookingController.getMyBookings);
+router.put('/booking/cancel/:id', isAuthenticated, bookingController.cancelBooking);
+router.delete('/booking/delete/:id', isAuthenticated, bookingController.deleteBooking);
 
 
 

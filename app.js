@@ -14,10 +14,10 @@ dotenv.config()
 
 connectDB();
 
-app.use(cors({
-  origin: 'http://localhost:5173', // आपके React app का exact origin
-  credentials: true               // ये जरूरी है for cookies/auth
-}));
+  app.use(cors({
+    origin: 'http://localhost:5173', // आपके React app का exact origin
+    credentials: true               // ये जरूरी है for cookies/auth
+  }));
 app.use(express.json());
 app.use(fileUpload({ useTempFiles: true }));
 

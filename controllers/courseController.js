@@ -1,10 +1,12 @@
 const Course = require('../models/Course');
 const cloudinary = require('../config/cloudinary');
+console.log(process.env.CLOUDINARY_API_KEY)
 
 class CourseController {
   // 🔹 CREATE Course
   static async createCourse(req, res) {
     try {
+      console.log(req.files)
       const { title, description, price, duration } = req.body;
       let imageUrl = '';
       let public_id = '';
@@ -14,6 +16,7 @@ class CourseController {
         const result = await cloudinary.uploader.upload(file.tempFilePath, {
           folder: 'courses',
         });
+        console.log(result)
         imageUrl = result.secure_url;
         public_id = result.public_id;
       }
@@ -32,6 +35,7 @@ class CourseController {
   static async getAllCourses(req, res) {
     try {
       const courses = await Course.find();
+      console.log(courses)
       res.status(200).json(courses);
     } catch (err) {
       res.status(500).json({ message: 'Error fetching courses' });
@@ -97,7 +101,7 @@ class CourseController {
     try {
       const course = await Course.findById(req.params.id);
       if (!course) return res.status(404).json({ message: 'Course not found' });
-      res.status(200).json(course);
+      res.status(200).json({ course });
     } catch (error) {
       res.status(500).json({ message: 'Error fetching course' });
     }
