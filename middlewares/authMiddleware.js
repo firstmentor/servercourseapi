@@ -14,6 +14,7 @@ const isAuthenticated = async (req, res, next) => {
     if (!user) return res.status(401).json({ message: "User not found" });
 
     req.user = user; // full user now available including email
+    // console.log(req.user)
     next();
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });

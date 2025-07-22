@@ -2,8 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-class UserController {  
-
+class UserController {
   // 🔐 Register user (admin or student)
   static async register(req, res) {
     try {
@@ -20,7 +19,6 @@ class UserController {
         name,
         email,
         password: hashedPassword,
-       
       });
 
       await newUser.save();
@@ -55,13 +53,18 @@ class UserController {
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        sameSite: "Lax",
+        maxAge: 3 * 24 * 60 * 60 * 1000,
       });
 
-      res.status(200).json({ message: "Login successful", role: user.role,
-        name: user.name,
-        email: user.email });
+      res
+        .status(200)
+        .json({
+          message: "Login successful",
+          role: user.role,
+          name: user.name,
+          email: user.email,
+        });
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
     }
@@ -76,13 +79,40 @@ class UserController {
   // 👤 Get profile
   static async getProfile(req, res) {
     try {
-      const user = await User.findById(req.user.userId).select("-password");
+      const user = await User.findById(req.user._id).select("-password");
       res.status(200).json(user);
     } catch (error) {
       res.status(500).json({ message: "Error fetching profile", error });
     }
   }
 
+  static changePassword = async (req, res) => {
+    try {
+      const { oldPassword, newPassword } = req.body;
+  
+      const user = await User.findById(req.user._id);
+      if (!user || !user.password) {
+        return res.status(404).json({ message: "User not found or password missing" });
+      }
+  
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Old password is incorrect" });
+      }
+  
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      user.password = hashedPassword;
+      await user.save();
+  
+      return res.status(200).json({ message: "Password changed successfully" });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+  
 }
 
 module.exports = UserController;
