@@ -15,7 +15,7 @@ dotenv.config()
 connectDB();
 
   app.use(cors({
-    origin: 'http://localhost:5173', // आपके React app का exact origin
+    origin: 'https://pncourse.netlify.app', // आपके React app का exact origin
     credentials: true               // ये जरूरी है for cookies/auth
   }));
 app.use(express.json());
