@@ -52,9 +52,9 @@ class UserController {
       // Send token in HTTP-Only cookie
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-        maxAge: 3 * 24 * 60 * 60 * 1000,
+        secure: true, // ✅ Netlify (HTTPS) के लिए true
+        sameSite: "None", // ✅ Netlify और Render अलग domain हैं, तो "None" जरूरी
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
       });
 
       res
